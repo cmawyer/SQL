@@ -1,0 +1,51 @@
+CREATE TABLE FamousPeople (
+    person_id INT PRIMARY KEY,
+    name VARCHAR(255),
+    occupation VARCHAR(255)
+INSERT INTO FamousPeople (person_id, name, occupation)
+VALUES
+    (1, 'Brad Pitt', 'Movie Star'),
+    (2, 'Angelina Jolie', 'Movie Star'),
+    (3, 'Leonardo DiCaprio', 'Movie Star'),
+    (4, 'Jennifer Lawrence', 'Movie Star');
+
+CREATE TABLE Movies (
+    movie_id INT PRIMARY KEY,
+    title VARCHAR(255)
+);
+INSERT INTO Movies (movie_id, title)
+VALUES
+    (101, 'Inception'),
+    (102, 'Fight Club'),
+    (103, 'Mr. & Mrs. Smith'),
+    (104, 'The Hunger Games');
+CREATE TABLE MovieStars (
+    movie_id INT,
+    person_id INT,
+    PRIMARY KEY (movie_id, person_id),
+    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id),
+    FOREIGN KEY (person_id) REFERENCES FamousPeople(person_id)
+);
+INSERT INTO MovieStars (movie_id, person_id)
+VALUES
+    (101, 3), -- Leonardo DiCaprio in Inception
+    (102, 1), -- Brad Pitt in Fight Club
+    (103, 1), -- Brad Pitt in Mr. & Mrs. Smith
+    (103, 2), -- Angelina Jolie in Mr. & Mrs. Smith
+    (104, 4); -- Jennifer Lawrence in The Hunger Games
+    
+SELECT Movies.title
+FROM Movies
+JOIN MovieStars ON Movies.movie_id = MovieStars.movie_id
+JOIN FamousPeople ON MovieStars.person_id = FamousPeople.person_id
+WHERE FamousPeople.name = 'Brad Pitt';   
+
+SELECT DISTINCT
+    FP1.name AS Person1,
+    FP2.name AS Person2,
+    'Yes' AS Married
+FROM FamousPeople FP1
+JOIN MovieStars MS1 ON FP1.person_id = MS1.person_id
+JOIN MovieStars MS2 ON MS1.movie_id = MS2.movie_id
+JOIN FamousPeople FP2 ON MS2.person_id = FP2.person_id
+WHERE FP1.person_id < FP2.person_id;
